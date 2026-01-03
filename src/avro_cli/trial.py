@@ -11,16 +11,9 @@ console = Console()
 
 
 @app.command()
-def trial() -> None:
-    avsc_location = Path("./") / "resource" / "avsc" / "example.avsc"
-
-    schema_json = avsc_location.open("r").read()
-
-    parsed_schema = schema.parse(schema_json)
-
-    output_dir = Path("./") / "resource" / "output"
-    output_dir.mkdir(parents=True, exist_ok=True)
-    output_location = output_dir / "output.avro"
+def generate_avro() -> None:
+    parsed_schema = get_schema()
+    output_location = get_output_avro_file()
 
     with DataFileWriter(
         output_location.open("wb"), DatumWriter(), parsed_schema, codec="deflate"
@@ -28,7 +21,30 @@ def trial() -> None:
         writer.append({"name": "Alyssa", "favorite_number": 256})
         writer.append({"name": "Ben", "favorite_number": 7, "favorite_color": "red"})
 
+
+@app.command()
+def decode_avro() -> None:
+    output_location = get_output_avro_file()
+
     with DataFileReader(output_location.open("rb"), DatumReader()) as reader:
         print(reader.schema)
         for user in reader:
             print(user)
+
+
+def get_schema() -> schema.Schema:
+    avsc_location = Path("./") / "resource" / "avsc" / "example.avsc"
+
+    schema_json = avsc_location.open("r").read()
+
+    parsed_schema = schema.parse(schema_json)
+
+    return parsed_schema
+
+
+def get_output_avro_file() -> Path:
+    output_dir = Path("./") / "resource" / "output"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_location = output_dir / "output.avro"
+
+    return output_location

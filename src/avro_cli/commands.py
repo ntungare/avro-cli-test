@@ -9,10 +9,9 @@ from avro_cli.state import state
 
 app = Typer(
     help="""
-Avro CLI: Codegen tool for all (most) language
+Avro CLI: CLI tool for generating AVPR/AVSC files using AVDL files
 
-(Let me know if there is a language that you would like that is missing,
-all codegen happens v)
+(Uses avro-tools.jar file internally to generate the files)
 """
 )
 
